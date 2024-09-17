@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useEffect, useState } from 'react';
-import LiveCursors from './LiveCursors';
+import LiveCursors from './cursor/LiveCursors';
 import { useBroadcastEvent, useEventListener, useMyPresence, useOthers } from '@liveblocks/react';
-import CursorChat from './CursorChat';
+import CursorChat from './cursor/CursorChat';
 import { CursorMode, CursorState, Reaction, ReactionEvent } from '@/types/type';
 import ReactionSelector from './reaction/ReactionButton';
 import FlyingReaction from './reaction/FlyingReaction';

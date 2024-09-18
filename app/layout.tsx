@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Quicksand } from 'next/font/google';
-import { Room } from './Room';
+import Room from './Room';
 import './globals.css';
 
 const quickSand = Quicksand({

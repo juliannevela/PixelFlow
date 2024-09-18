@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useEffect, useState } from 'react';
 import LiveCursors from './cursor/LiveCursors';
-import { useBroadcastEvent, useEventListener, useMyPresence, useOthers } from '@liveblocks/react';
 import CursorChat from './cursor/CursorChat';
 import { CursorMode, CursorState, Reaction, ReactionEvent } from '@/types/type';
 import ReactionSelector from './reaction/ReactionButton';
 import FlyingReaction from './reaction/FlyingReaction';
 import useInterval from '@/hooks/useInterval';
+import { useBroadcastEvent, useEventListener, useMyPresence, useOthers } from '@/liveblocks.config';
 
 type Props = {
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;

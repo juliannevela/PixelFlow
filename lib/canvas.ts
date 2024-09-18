@@ -11,7 +11,7 @@ import {
   CanvasSelectionCreated,
   RenderCanvas,
 } from '@/types/type';
-import { defaultNavElement } from '@/assets/assets/constants';
+import { defaultNavElement } from '@/constants';
 import { createSpecificShape } from './shapes';
 
 // initialize fabric canvas

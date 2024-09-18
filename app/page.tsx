@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 
 import LeftSidebar from '@/components/LeftSidebar';
 import Live from '@/components/Live';

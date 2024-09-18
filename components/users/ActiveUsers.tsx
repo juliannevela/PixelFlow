@@ -26,7 +26,6 @@ const ActiveUsers = () => {
     );
   }, [users.length]);
 
-  console.log(currentUser);
   return memoizedUsers;
 };
 

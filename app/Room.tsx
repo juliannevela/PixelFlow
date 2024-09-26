@@ -9,7 +9,7 @@ import { RoomProvider } from "@/liveblocks.config";
 const Room = ({ children }: { children: React.ReactNode }) => {
   return (
     <RoomProvider
-      id="fig-room"
+      id='pixel-main'
       /**
        * initialPresence is used to initialize the presence of the current
        * user in the room.
@@ -36,6 +36,6 @@ const Room = ({ children }: { children: React.ReactNode }) => {
       </ClientSideSuspense>
     </RoomProvider>
   );
-}
+};
 
 export default Room;

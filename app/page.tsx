@@ -16,11 +16,14 @@ import {
   handleCanvasObjectModified,
 } from "@/lib/canvas";
 import { ActiveElement } from "@/types/type";
-import { useMutation, useStorage } from "@/liveblocks.config";
+import { useMutation, useRedo, useStorage, useUndo } from "@/liveblocks.config";
 import { defaultNavElement } from "@/constants";
-import { handleDelete } from "@/lib/key-events";
+import { handleDelete, handleKeyDown } from "@/lib/key-events";
 
 export default function Page() {
+  const undo = useUndo();
+  const redo = useRedo();
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<fabric.Canvas | null>(null);
   const isDrawing = useRef(false);
@@ -100,7 +103,7 @@ export default function Page() {
       });
     });
 
-    canvas.on("mouse:up", (options) => {
+    canvas.on("mouse:up", () => {
       handleCanvasMouseUp({
         canvas,
         isDrawing,
@@ -134,6 +137,17 @@ export default function Page() {
       handleResize({ fabricRef });
     });
 
+    window.addEventListener("keydown", (e) => {
+      handleKeyDown({
+        e,
+        canvas: fabricRef.current,
+        redo,
+        undo,
+        syncShapeInStorage,
+        deleteShapeFromStorage,
+      });
+    });
+
     return () => {
       canvas.dispose();
     };
@@ -154,7 +168,7 @@ export default function Page() {
         handleActiveElement={handleActiveElement}
       />
       <section className='flex h-full flex-row'>
-        <LeftSidebar />
+        <LeftSidebar allShapes={Array.from(canvasObjects)} />
         <Live canvasRef={canvasRef} />
         <RightSidebar />
       </section>

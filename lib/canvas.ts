@@ -1,5 +1,5 @@
-import { fabric } from 'fabric';
-import { v4 as uuid4 } from 'uuid';
+import { fabric } from "fabric";
+import { v4 as uuid4 } from "uuid";
 
 import {
   CanvasMouseDown,
@@ -10,9 +10,9 @@ import {
   CanvasPathCreated,
   CanvasSelectionCreated,
   RenderCanvas,
-} from '@/types/type';
-import { defaultNavElement } from '@/constants';
-import { createSpecificShape } from './shapes';
+} from "@/types/type";
+import { defaultNavElement } from "@/constants";
+import { createSpecificShape } from "./shapes";
 
 // initialize fabric canvas
 export const initializeFabric = ({
@@ -23,7 +23,7 @@ export const initializeFabric = ({
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
 }) => {
   // get canvas element
-  const canvasElement = document.getElementById('canvas');
+  const canvasElement = document.getElementById("canvas");
 
   // create fabric canvas
   const canvas = new fabric.Canvas(canvasRef.current, {
@@ -60,7 +60,7 @@ export const handleCanvasMouseDown = ({
   canvas.isDrawingMode = false;
 
   // if selected shape is freeform, set drawing mode to true and return
-  if (selectedShapeRef.current === 'freeform') {
+  if (selectedShapeRef.current === "freeform") {
     isDrawing.current = true;
     canvas.isDrawingMode = true;
     canvas.freeDrawingBrush.width = 5;
@@ -70,7 +70,11 @@ export const handleCanvasMouseDown = ({
   canvas.isDrawingMode = false;
 
   // if target is the selected shape or active selection, set isDrawing to false
-  if (target && (target.type === selectedShapeRef.current || target.type === 'activeSelection')) {
+  if (
+    target &&
+    (target.type === selectedShapeRef.current ||
+      target.type === "activeSelection")
+  ) {
     isDrawing.current = false;
 
     // set active object to target
@@ -85,7 +89,10 @@ export const handleCanvasMouseDown = ({
     isDrawing.current = true;
 
     // create custom fabric object/shape and set it to shapeRef
-    shapeRef.current = createSpecificShape(selectedShapeRef.current, pointer as any);
+    shapeRef.current = createSpecificShape(
+      selectedShapeRef.current,
+      pointer as any
+    );
 
     // if shapeRef is not null, add it to canvas
     if (shapeRef.current) {
@@ -96,7 +103,7 @@ export const handleCanvasMouseDown = ({
 };
 
 // handle mouse move event on canvas to draw shapes with different dimensions
-export const handleCanvaseMouseMove = ({
+export const handleCanvasMouseMove = ({
   options,
   canvas,
   isDrawing,
@@ -106,7 +113,7 @@ export const handleCanvaseMouseMove = ({
 }: CanvasMouseMove) => {
   // if selected shape is freeform, return
   if (!isDrawing.current) return;
-  if (selectedShapeRef.current === 'freeform') return;
+  if (selectedShapeRef.current === "freeform") return;
 
   canvas.isDrawingMode = false;
 
@@ -116,34 +123,34 @@ export const handleCanvaseMouseMove = ({
   // depending on the selected shape, set the dimensions of the shape stored in shapeRef in previous step of handelCanvasMouseDown
   // calculate shape dimensions based on pointer coordinates
   switch (selectedShapeRef?.current) {
-    case 'rectangle':
+    case "rectangle":
       shapeRef.current?.set({
         width: pointer.x - (shapeRef.current?.left || 0),
         height: pointer.y - (shapeRef.current?.top || 0),
       });
       break;
 
-    case 'circle':
+    case "circle":
       shapeRef.current.set({
         radius: Math.abs(pointer.x - (shapeRef.current?.left || 0)) / 2,
       });
       break;
 
-    case 'triangle':
+    case "triangle":
       shapeRef.current?.set({
         width: pointer.x - (shapeRef.current?.left || 0),
         height: pointer.y - (shapeRef.current?.top || 0),
       });
       break;
 
-    case 'line':
+    case "line":
       shapeRef.current?.set({
         x2: pointer.x,
         y2: pointer.y,
       });
       break;
 
-    case 'image':
+    case "image":
       shapeRef.current?.set({
         width: pointer.x - (shapeRef.current?.left || 0),
         height: pointer.y - (shapeRef.current?.top || 0),
@@ -174,7 +181,7 @@ export const handleCanvasMouseUp = ({
   setActiveElement,
 }: CanvasMouseUp) => {
   isDrawing.current = false;
-  if (selectedShapeRef.current === 'freeform') return;
+  if (selectedShapeRef.current === "freeform") return;
 
   // sync shape in storage as drawing is stopped
   syncShapeInStorage(shapeRef.current);
@@ -200,7 +207,7 @@ export const handleCanvasObjectModified = ({
   const target = options.target;
   if (!target) return;
 
-  if (target?.type == 'activeSelection') {
+  if (target?.type == "activeSelection") {
     // fix this
   } else {
     syncShapeInStorage(target);
@@ -208,7 +215,10 @@ export const handleCanvasObjectModified = ({
 };
 
 // update shape in storage when path is created when in freeform mode
-export const handlePathCreated = ({ options, syncShapeInStorage }: CanvasPathCreated) => {
+export const handlePathCreated = ({
+  options,
+  syncShapeInStorage,
+}: CanvasPathCreated) => {
   // get path object
   const path = options.path;
   if (!path) return;
@@ -223,7 +233,11 @@ export const handlePathCreated = ({ options, syncShapeInStorage }: CanvasPathCre
 };
 
 // check how object is moving on canvas and restrict it to canvas boundaries
-export const handleCanvasObjectMoving = ({ options }: { options: fabric.IEvent }) => {
+export const handleCanvasObjectMoving = ({
+  options,
+}: {
+  options: fabric.IEvent;
+}) => {
   // get target object which is moving
   const target = options.target as fabric.Object;
 
@@ -237,7 +251,10 @@ export const handleCanvasObjectMoving = ({ options }: { options: fabric.IEvent }
   if (target && target.left) {
     target.left = Math.max(
       0,
-      Math.min(target.left, (canvas.width || 0) - (target.getScaledWidth() || target.width || 0))
+      Math.min(
+        target.left,
+        (canvas.width || 0) - (target.getScaledWidth() || target.width || 0)
+      )
     );
   }
 
@@ -245,7 +262,10 @@ export const handleCanvasObjectMoving = ({ options }: { options: fabric.IEvent }
   if (target && target.top) {
     target.top = Math.max(
       0,
-      Math.min(target.top, (canvas.height || 0) - (target.getScaledHeight() || target.height || 0))
+      Math.min(
+        target.top,
+        (canvas.height || 0) - (target.getScaledHeight() || target.height || 0)
+      )
     );
   }
 };
@@ -277,16 +297,16 @@ export const handleCanvasSelectionCreated = ({
       : selectedElement?.height;
 
     setElementAttributes({
-      width: scaledWidth?.toFixed(0).toString() || '',
-      height: scaledHeight?.toFixed(0).toString() || '',
-      fill: selectedElement?.fill?.toString() || '',
-      stroke: selectedElement?.stroke || '',
+      width: scaledWidth?.toFixed(0).toString() || "",
+      height: scaledHeight?.toFixed(0).toString() || "",
+      fill: selectedElement?.fill?.toString() || "",
+      stroke: selectedElement?.stroke || "",
       // @ts-ignore
-      fontSize: selectedElement?.fontSize || '',
+      fontSize: selectedElement?.fontSize || "",
       // @ts-ignore
-      fontFamily: selectedElement?.fontFamily || '',
+      fontFamily: selectedElement?.fontFamily || "",
       // @ts-ignore
-      fontWeight: selectedElement?.fontWeight || '',
+      fontWeight: selectedElement?.fontWeight || "",
     });
   }
 };
@@ -309,13 +329,17 @@ export const handleCanvasObjectScaling = ({
 
   setElementAttributes((prev) => ({
     ...prev,
-    width: scaledWidth?.toFixed(0).toString() || '',
-    height: scaledHeight?.toFixed(0).toString() || '',
+    width: scaledWidth?.toFixed(0).toString() || "",
+    height: scaledHeight?.toFixed(0).toString() || "",
   }));
 };
 
 // render canvas objects coming from storage on canvas
-export const renderCanvas = ({ fabricRef, canvasObjects, activeObjectRef }: RenderCanvas) => {
+export const renderCanvas = ({
+  fabricRef,
+  canvasObjects,
+  activeObjectRef,
+}: RenderCanvas) => {
   // clear canvas
   fabricRef.current?.clear();
 
@@ -350,7 +374,7 @@ export const renderCanvas = ({ fabricRef, canvasObjects, activeObjectRef }: Rend
        *
        * Fabric Namespace: http://fabricjs.com/docs/fabric.html
        */
-      'fabric'
+      "fabric"
     );
   });
 
@@ -359,7 +383,7 @@ export const renderCanvas = ({ fabricRef, canvasObjects, activeObjectRef }: Rend
 
 // resize canvas dimensions on window resize
 export const handleResize = ({ canvas }: { canvas: fabric.Canvas | null }) => {
-  const canvasElement = document.getElementById('canvas');
+  const canvasElement = document.getElementById("canvas");
   if (!canvasElement) return;
 
   if (!canvas) return;

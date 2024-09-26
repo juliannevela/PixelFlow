@@ -9,18 +9,25 @@ import { ActiveElement, NavbarProps } from "@/types/type";
 import { Button } from "./ui/button";
 import ShapesMenu from "./ShapesMenu";
 import ActiveUsers from "./users/ActiveUsers";
-import { NewThread } from './comments/NewThread';
+import { NewThread } from "./comments/NewThread";
+import LogoLight from "@/public/assets/logo_light.svg?url";
 
-const Navbar = ({ activeElement, imageInputRef, handleImageUpload, handleActiveElement }: NavbarProps) => {
+const Navbar = ({
+  activeElement,
+  imageInputRef,
+  handleImageUpload,
+  handleActiveElement,
+}: NavbarProps) => {
   const isActive = (value: string | Array<ActiveElement>) =>
     (activeElement && activeElement.value === value) ||
-    (Array.isArray(value) && value.some((val) => val?.value === activeElement?.value));
+    (Array.isArray(value) &&
+      value.some((val) => val?.value === activeElement?.value));
 
   return (
-    <nav className="flex select-none items-center justify-between gap-4 bg-primary-black px-5 text-white">
-      <Image src="/assets/logo_light.svg" alt="PixelFlow logo" width={100} height={30} />
+    <nav className='flex select-none items-center justify-between gap-4 bg-primary-black px-5 text-white'>
+      <Image src={LogoLight} alt='PixelFlow logo' width={175} height={46} />
 
-      <ul className="flex flex-row">
+      <ul className='flex flex-row'>
         {navElements.map((item: ActiveElement | any) => (
           <li
             key={item.name}
@@ -28,7 +35,7 @@ const Navbar = ({ activeElement, imageInputRef, handleImageUpload, handleActiveE
               if (Array.isArray(item.value)) return;
               handleActiveElement(item);
             }}
-            className={`group px-2.5 py-5 flex justify-center items-center
+            className={`group flex items-center justify-center px-2.5 py-5
             ${isActive(item.value) ? "bg-primary-green" : "hover:bg-primary-grey-200"}
             `}
           >
@@ -44,7 +51,7 @@ const Navbar = ({ activeElement, imageInputRef, handleImageUpload, handleActiveE
             ) : item?.value === "comments" ? (
               // If value is comments, trigger the NewThread component
               <NewThread>
-                <Button className="relative w-5 h-5 object-contain">
+                <Button className='relative h-5 w-5 object-contain'>
                   <Image
                     src={item.icon}
                     alt={item.name}
@@ -54,7 +61,7 @@ const Navbar = ({ activeElement, imageInputRef, handleImageUpload, handleActiveE
                 </Button>
               </NewThread>
             ) : (
-              <Button className="relative w-5 h-5 object-contain">
+              <Button className='relative h-5 w-5 object-contain'>
                 <Image
                   src={item.icon}
                   alt={item.name}
@@ -72,4 +79,7 @@ const Navbar = ({ activeElement, imageInputRef, handleImageUpload, handleActiveE
   );
 };
 
-export default memo(Navbar, (prevProps, nextProps) => prevProps.activeElement === nextProps.activeElement);
+export default memo(
+  Navbar,
+  (prevProps, nextProps) => prevProps.activeElement === nextProps.activeElement
+);

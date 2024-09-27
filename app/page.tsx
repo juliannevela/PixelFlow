@@ -14,8 +14,10 @@ import {
   handleCanvasMouseUp,
   renderCanvas,
   handleCanvasObjectModified,
+  handleCanvasSelectionCreated,
+  handleCanvasObjectScaling,
 } from "@/lib/canvas";
-import { ActiveElement } from "@/types/type";
+import { ActiveElement, Attributes } from "@/types/type";
 import { useMutation, useRedo, useStorage, useUndo } from "@/liveblocks.config";
 import { defaultNavElement } from "@/constants";
 import { handleDelete, handleKeyDown } from "@/lib/key-events";
@@ -56,16 +58,26 @@ export default function Page() {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<fabric.Canvas | null>(null);
-  const isDrawing = useRef(false);
+  const isDrawingRef = useRef(false);
   const shapeRef = useRef<fabric.Object | null>(null);
   const selectedShapeRef = useRef<string | null>(null);
   const activeObjectRef = useRef<fabric.Object | null>(null);
   const imageInputRef = useRef<HTMLImageElement>(null);
+  const isEditingRef = useRef(false);
 
   const [activeElement, setActiveElement] = useState<ActiveElement>({
     name: "",
     value: "",
     icon: "",
+  });
+  const [elementAttributes, setElementAttributes] = useState<Attributes>({
+    width: "",
+    height: "",
+    fontSize: "",
+    fontFamily: "",
+    fontWeight: "",
+    fill: "abc",
+    stroke: "abc",
   });
 
   const handleActiveElement = (elem: ActiveElement) => {
@@ -83,7 +95,7 @@ export default function Page() {
         break;
       case "image":
         imageInputRef.current?.click();
-        isDrawing.current = false;
+        isDrawingRef.current = false;
 
         if (fabricRef.current) {
           fabricRef.current.isDrawingMode = false;
@@ -103,16 +115,15 @@ export default function Page() {
       handleCanvasMouseDown({
         options,
         canvas,
-        isDrawing,
+        isDrawing: isDrawingRef,
         shapeRef,
         selectedShapeRef,
       });
     });
-
     canvas.on("mouse:up", () => {
       handleCanvasMouseUp({
         canvas,
-        isDrawing,
+        isDrawing: isDrawingRef,
         shapeRef,
         selectedShapeRef,
         syncShapeInStorage,
@@ -120,29 +131,39 @@ export default function Page() {
         activeObjectRef,
       });
     });
-
     canvas.on("mouse:move", (options) => {
       handleCanvasMouseMove({
         options,
         canvas,
-        isDrawing,
+        isDrawing: isDrawingRef,
         shapeRef,
         selectedShapeRef,
         syncShapeInStorage,
       });
     });
-
     canvas.on("object:modified", (options) => {
       handleCanvasObjectModified({
         options,
         syncShapeInStorage,
       });
     });
+    canvas.on("selection:created", (options) => {
+      handleCanvasSelectionCreated({
+        options,
+        isEditingRef,
+        setElementAttributes,
+      });
+    });
+    canvas.on("object:scaling", (options) => {
+      handleCanvasObjectScaling({
+        options,
+        setElementAttributes,
+      });
+    });
 
     window.addEventListener("resize", () => {
       handleResize({ fabricRef });
     });
-
     window.addEventListener("keydown", (e) => {
       handleKeyDown({
         e,
@@ -187,7 +208,14 @@ export default function Page() {
       <section className='flex h-full flex-row'>
         <LeftSidebar allShapes={Array.from(canvasObjects)} />
         <Live canvasRef={canvasRef} />
-        <RightSidebar />
+        <RightSidebar
+          elementAttributes={elementAttributes}
+          setElementAttributes={setElementAttributes}
+          fabricRef={fabricRef}
+          activeObjectRef={activeObjectRef}
+          isEditingRef={isEditingRef}
+          syncShapeInStorage={syncShapeInStorage}
+        />
       </section>
     </main>
   );

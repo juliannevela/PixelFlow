@@ -1,12 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useEffect, useState } from 'react';
-import LiveCursors from './cursor/LiveCursors';
-import CursorChat from './cursor/CursorChat';
-import { CursorMode, CursorState, Reaction, ReactionEvent } from '@/types/type';
-import ReactionSelector from './reaction/ReactionButton';
-import FlyingReaction from './reaction/FlyingReaction';
-import useInterval from '@/hooks/useInterval';
-import { useBroadcastEvent, useEventListener, useMyPresence, useOthers } from '@/liveblocks.config';
+import React, { useCallback, useEffect, useState } from "react";
+import LiveCursors from "./cursor/LiveCursors";
+import CursorChat from "./cursor/CursorChat";
+import { CursorMode, CursorState, Reaction, ReactionEvent } from "@/types/type";
+import ReactionSelector from "./reaction/ReactionButton";
+import FlyingReaction from "./reaction/FlyingReaction";
+import useInterval from "@/hooks/useInterval";
+import {
+  useBroadcastEvent,
+  useEventListener,
+  useMyPresence,
+  useOthers,
+} from "@/liveblocks.config";
+import { Comments } from "./comments/Comments";
 
 type Props = {
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
@@ -22,11 +28,17 @@ const Live = ({ canvasRef }: Props) => {
   const broadcast = useBroadcastEvent();
 
   useInterval(() => {
-    setReaction((reaction) => reaction.filter((r) => r.timestamp > Date.now() - 4000));
+    setReaction((reaction) =>
+      reaction.filter((r) => r.timestamp > Date.now() - 4000)
+    );
   }, 1000);
 
   useInterval(() => {
-    if (cursorState.mode === CursorMode.Reaction && cursorState.isPressed && cursor) {
+    if (
+      cursorState.mode === CursorMode.Reaction &&
+      cursorState.isPressed &&
+      cursor
+    ) {
       setReaction((reactions) =>
         reactions.concat([
           {
@@ -80,7 +92,9 @@ const Live = ({ canvasRef }: Props) => {
 
       updateMyPresence({ cursor: { x, y } });
       setCursorState((state: CursorState) =>
-        cursorState.mode === CursorMode.Reaction ? { ...state, isPressed: true } : state
+        cursorState.mode === CursorMode.Reaction
+          ? { ...state, isPressed: true }
+          : state
       );
     },
     [cursorState.mode, setCursorState]
@@ -89,7 +103,9 @@ const Live = ({ canvasRef }: Props) => {
   const handlePointerUp = useCallback(
     (event: React.PointerEvent) => {
       setCursorState((state: CursorState) =>
-        cursorState.mode === CursorMode.Reaction ? { ...state, isPressed: true } : state
+        cursorState.mode === CursorMode.Reaction
+          ? { ...state, isPressed: true }
+          : state
       );
     },
     [cursorState.mode, setCursorState]
@@ -97,37 +113,37 @@ const Live = ({ canvasRef }: Props) => {
 
   useEffect(() => {
     const onKeyUp = (e: KeyboardEvent) => {
-      if (e.key === '/') {
+      if (e.key === "/") {
         setCursorState({
           mode: CursorMode.Chat,
           previousMessage: null,
-          message: '',
+          message: "",
         });
-      } else if (e.key === 'Escape') {
+      } else if (e.key === "Escape") {
         updateMyPresence({
-          message: '',
+          message: "",
         });
         setCursorState({
           mode: CursorMode.Hidden,
         });
-      } else if (e.key === 'e') {
+      } else if (e.key === "e") {
         setCursorState({
           mode: CursorMode.ReactionSelector,
         });
       }
     };
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === '/') {
+      if (e.key === "/") {
         e.preventDefault();
       }
     };
 
-    window.addEventListener('keyup', onKeyUp);
-    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+    window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      window.removeEventListener('keyup', onKeyUp);
-      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("keydown", onKeyDown);
     };
   }, [updateMyPresence]);
 
@@ -141,12 +157,12 @@ const Live = ({ canvasRef }: Props) => {
 
   return (
     <div
-      id="canvas"
+      id='canvas'
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
-      className="h-[100vh] w-full flex justify-center items-center text-center"
+      className='flex h-[100vh] w-full items-center justify-center text-center'
     >
       <canvas ref={canvasRef} />
 
@@ -174,6 +190,7 @@ const Live = ({ canvasRef }: Props) => {
       )}
 
       <LiveCursors others={others} />
+      <Comments />
     </div>
   );
 };

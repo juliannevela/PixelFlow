@@ -76,8 +76,8 @@ export default function Page() {
     fontSize: "",
     fontFamily: "",
     fontWeight: "",
-    fill: "abc",
-    stroke: "abc",
+    fill: "#aabbcc",
+    stroke: "#aabbcc",
   });
 
   const handleActiveElement = (elem: ActiveElement) => {

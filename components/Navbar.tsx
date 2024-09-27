@@ -25,7 +25,7 @@ const Navbar = ({
 
   return (
     <nav className='flex select-none items-center justify-between gap-4 bg-primary-black px-5 text-white'>
-      <Image src={LogoLight} alt='PixelFlow logo' height={46} priority />
+      <Image src={LogoLight} alt='PixelFlow logo' width={200} priority />
 
       <ul className='flex flex-row'>
         {navElements.map((item: ActiveElement | any) => (

@@ -16,6 +16,7 @@ import {
   handleCanvasObjectModified,
   handleCanvasSelectionCreated,
   handleCanvasObjectScaling,
+  handlePathCreated,
 } from "@/lib/canvas";
 import { ActiveElement, Attributes } from "@/types/type";
 import { useMutation, useRedo, useStorage, useUndo } from "@/liveblocks.config";
@@ -160,8 +161,15 @@ export default function Page() {
         setElementAttributes,
       });
     });
+    canvas.on("path:created", (options) => {
+      handlePathCreated({
+        options,
+        syncShapeInStorage,
+      });
+    });
 
     window.addEventListener("resize", () => {
+      // @ts-ignore
       handleResize({ fabricRef });
     });
     window.addEventListener("keydown", (e) => {
